@@ -6,6 +6,9 @@ while meal!='.':
     if meal != '.':
         x = meal.split(",")
         #regroup one single meal into dictionary form
+        for i in x:
+            if i.isdigit():
+                i = float(i)
         thedist = {
             "name": x[0],
             "sell_for": float(x[1]),

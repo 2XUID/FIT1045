@@ -9,7 +9,7 @@ while meal!='.':
     meal = input()
     if meal != '.':
         x = meal.split(",")
-        thedist = {
+        the_dist = {
             "name": x[0],
             "sell_for": float(x[1]),
             "cost_to_make": float(x[2]),

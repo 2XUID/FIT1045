@@ -131,6 +131,7 @@ def random_tip_compute(tip_chance, base_tip_value, random_comparison):
     else:
         return 0.0
 
+
 def order(options):
         validatation = False
         #display menu
@@ -265,6 +266,7 @@ def order_for_x_people(number):
         print("After serving meals to "+str_number+" people, ", "we made a profit of $ ",total_profit)
         return total_profit
 
+a = order()
 
 if __name__ == "__main__":
     #order(get_meals_list_from_user())
