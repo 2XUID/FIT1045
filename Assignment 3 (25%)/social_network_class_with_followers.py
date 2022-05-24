@@ -28,21 +28,19 @@ class Person:
         
         
     def birthday_within_X_days_of_Y(self,days,comparison_date):
-        
         upper = self.DOB + datetime.timedelta(days=days)
         lower = self.DOB - datetime.timedelta(days=days)
-        
         ori_checkyear=self.DOB.year
-        
+    
         for possibleyear in (ori_checkyear-1,ori_checkyear,ori_checkyear+1):
             comparison_date = comparison_date.replace(year = possibleyear)
             checkdate = lower<=comparison_date<=upper
             if checkdate is True:
                 break
         return checkdate
-        
-    def make_follow(self,other_person):
+    
 
+    def make_follow(self,other_person):
         #this if statement prevents someone becoming friends with themselves (not possible)
         if self.name != other_person.name:
         
@@ -105,7 +103,7 @@ class Post:
         #these instance variables are stored such that we could trace a post for 
         #its mother post, child post, post id, owner id, tagg, and privacy settings
         self.content=content
-        self.tagged=tagged 
+        self.tagged=tagged
         self.children=[]
         self.childrenindex=[]
         self.owner_id=owner_id
@@ -113,7 +111,7 @@ class Post:
         self.motherpost_id=0
         self.isprivate=is_private
         self.threaded_index=[owner_id,owner_threadpost_id]
-        #the global variables are updated here for every post created. 
+        #the global variables are updated here for every post created.
         Post_dic[Post_id]=self
         Children_index_dic[Post_id]=[]
 
