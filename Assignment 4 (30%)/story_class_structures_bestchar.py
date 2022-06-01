@@ -17,7 +17,7 @@ class StoryBest(Story):
         '''
         #gets the scores of skill_or_attribute_name for each of the characters in the story instance and puts it in a list
         chara_score_list=[chara.skill_attri_score_dict[skill_or_attribute_name] for \
-                          chara_index, chara in self.chara_dict.items()]
+                            chara_index, chara in self.chara_dict.items()]
         #set the recommend_chara as the index of character that has the highest score fot the particular attribute = 1 (because the numbering of characters starts at 1 not 0)
         recommend_chara=self.chara_dict[chara_score_list.index(max(chara_score_list))+1]
         #set the active_chara to the recommend_chara

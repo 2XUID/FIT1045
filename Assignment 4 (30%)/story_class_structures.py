@@ -76,7 +76,6 @@ class Character:
                     split()])!= set(Character.skill_dict.keys()):
             raise ValueError(f'{string_input[2]} is invalid; unexpected skill name given')
         #defining the objects of the instance
-
         #name is the same as the first index of the string_input
         self.name = string_input[0]
         #acumen score is the first element of the attribute_score_ls
@@ -98,7 +97,6 @@ class Character:
                             'language': self.charm,
                             'acrobatics': self.body,
                             'craft': self.body}
-
         #adding 2 to the skill that is in proficient.
         self.skill_attri_score_dict[self.proficient]=self.skill_attri_score_dict[self.proficient]+2
         # Character.character_count+=1
@@ -148,7 +146,6 @@ class Character:
             "-" (a failure)
             "--" (an overwhelming failure)
         '''
-
         #base score is the score that that character has for that attribute or skill
         #this score is retrieved form the dictionary skill_attri_score_dict in the character instance
         base_score=self.skill_attri_score_dict[skill_or_attribute_name]
@@ -166,14 +163,12 @@ class Character:
                 break
         #the return value is the key of the corresponding interval which final score is within.
         return the_key
-
     def __str__(self):
         '''
         this is a string representation of the instance in class Character
         it returns a string in the format:
             "name [A(acumen_score) B(body_score) C(charm_score)] is proficient in (proficient_skill)"
         '''
-
         return f"{self.name} [A{self.acumen} B{self.body} C{self.charm}] is proficient in {self.proficient}"
 
 
@@ -183,7 +178,6 @@ class Option:
     Option class for representing an single option in a given scene (each scene can have multiple options).
     Author: Vivian Liu
     """
-
     def __init__(self,option_id,skillattri,option_descrip,next_scenescore_dict):
         '''
         constructor to initialise an instance of class Option
@@ -209,7 +203,6 @@ class Option:
             self.difficulty=int(skillattri.split()[1])
             #initialise skillattri_name as the first part of the string after splitting with whitespace
             self.skillattri_name=skillattri.split()[0]
-
         #if there is no information in skillattri
         else:
             #set difficulty to 0
@@ -220,19 +213,15 @@ class Option:
         self.description=option_descrip
         #set the next_scene_dict as the next_scenescore_dict
         self.next_scene_dict=next_scenescore_dict
-
         #finding the start and end indecies for the character element that must be replaced in the option description
         chara_id_indexstart=[index+2 for index, chara in enumerate(self.description) if chara == '{']
         chara_id_indexend=[index for index, chara in enumerate(self.description) if chara == '}']
-
         #initialise an empty list to stor the ids of the characters that will have to take the places of the replaceable elements
         chara_id_list=[]
         #initialise the active character as an empty list
         self.active_chara=[]
-
         #if there are replaceable elements in the option description
         if chara_id_indexstart!=[]:
-
             #iterate over the index for the length of the chara_id_indexstart
             for index in range(len(chara_id_indexstart)):
                 #create a temprary id to store the id (integer) of the character that will replace the replaceable element
@@ -241,7 +230,6 @@ class Option:
                 chara_id_list.append(temp_id)
             #append the first character id in the character id list as the active Character in this instance
             self.active_chara.append(chara_id_list[0])
-
     def __str__(self):
         printid=self.id.replace('.', '')
         return ('the option info is as below\n' + f'this is option {printid}\n'+
@@ -255,7 +243,6 @@ def option_info_splitter(individual_option):
         - individual_option is a string in the format:
             * for a non-ending option = "1. [skillOrAttribute Difficulty] text --ID -ID +ID ++ID"
             * for an ending option = "2. text --ID -ID +ID ++ID"
-
     This function returns:
         - option_id (a sting in the format "[num].")
         - skillattri (a string in the format "attribute [num]")
@@ -265,13 +252,10 @@ def option_info_splitter(individual_option):
                                         - the value is the sting of the outcome (eg "++[num]"))
         - next_scene_id_str (a string of next outcomes that are possible ordered from best to worst outcomes)
     '''
-
     #option_id_locindex is the index where the '.' is in the string individual_option
     option_id_locindex=individual_option.find('.')
-
     #option_id is a variable that hold the string with the option id in the form "[num]."
     option_id=individual_option[0:option_id_locindex+1]
-
     #if statement finds whether the option is an ending or non ending option
     if individual_option[option_id_locindex+2] == '[':
         #if it is a non ending (i.e has the [attribute [num]]) option:
@@ -285,37 +269,29 @@ def option_info_splitter(individual_option):
         skillattri=''
         # option_descrip_index begins from 2 indices past the "." character
         option_descrip_index=individual_option.find('.')+2
-
     #next_scene_index is a variable that holds the indicies of where each next scene outcome begins (where the special characters listed begin)
     next_scene_index=[index for index, content in enumerate(individual_option)
                         if any(element in ['+','-','++','--'] for element in content)]
-
     #option_descrip is a variable that holds a string staring from the option_descrip_index
     #and ends at the lowest index for the next_scene_index - 1 (to remove whitespace)
     option_descrip=individual_option[option_descrip_index:min(next_scene_index)-1]
-
     #create a temporary scene id list which includes all the ids of the possible outcomes of these scene in the following format:
     #   - ["[success or failure characters][num]","[success or failure characters][num]"]
     #        * e.g ["++2","-3"]
     temp_scene_id=individual_option[min(next_scene_index)::].split()
-
     #create an empty dictionary for the information about the next possible scenes
     next_scenescore_dict={}
-
     #for loop to iterate over each of the strings in temp_scene_id
     for scene_id in temp_scene_id:
-
         #add to the dictionary (next_scenescore_dict) with key being the sum of:
         #    - the count of '+'s in the sting
         #    - the  count of '-'s in the string * -1
         #The corresponding value for this key is the scene_id (eg "++2")
         next_scenescore_dict[scene_id.count('+')+(-scene_id.count('-'))]=scene_id
-
         #if statement to check if the number of outcome values ('+'s or '-'s) is less than 2
         #if it is not a ValueError is raised
         if scene_id.count('+')+scene_id.count('-')>2:
             raise ValueError(f'check the scene input, {scene_id} is out of range of [++,+,-,--]')
-
     #create a keylist which is a list of all the keys in next_scenescore_dict (the keys will be values from -2 to 2 excluding 0)
     keylist=list(next_scenescore_dict.keys())
     #the list is sorted in reverse so that they are smallest to largest
@@ -336,11 +312,9 @@ class Scene:
     Scene class for representing an individual scene that contains a set of options
     Author: Vivian Liu
     """
-
     def __init__(self,scene_id,scene_description,scene_index,temp_option_ls):
         '''
         This constructor initialise the Scene instance with values.
-
         The initialiser requires the values:
             - scene_id is a string that holds the scene's id (either "S", "[num]", "E")
             - scene_description is a string that holds the text describing the scene
@@ -348,40 +322,31 @@ class Scene:
                 * (start of scene index, middle of scene index, end of scene index) or another way to describe it is:
                 *  (index start "----", index "====", index end "----") for a single scene
             - temp_option_ls is a list that holds each of the options in the scene (starts from "====" and ends at "----")
-
         This sets up an instance of the class Scene
         '''
-
         #initializing the argument information for this instance
         self.id=scene_id
         self.description=scene_description
         self.index=scene_index
         self.options_ls=temp_option_ls
-
         #initializing an empty dictionary for the options in the scene
         self.options_dict={}
-
         #chara_id_indexstart is that starting index for when {C[num]} is found in the description.
         #it indexes the first digit value after the "{"
         chara_id_indexstart=[index+2 for index, chara in enumerate(self.description) if chara == '{']
-
         #chara_id_indexend is that ending index for when {C[num]} is found in the description.
         #it indexes the position of the "}" character
         chara_id_indexend=[index for index, chara in enumerate(self.description) if chara == '}']
-
         #initialise an empty list to store each character number required for the description string
         chara_id_list=[]
-
         #if statement to check if any character names must be added to the description
         if chara_id_indexstart!=[]:
             #if there are character names required
             #use for loop to iterate over each index in chara_id_indexstart
             for index in range(len(chara_id_indexstart)):
-
                 #collect the digits in the string and convert into an integer by 
                 #selecting the characters from chara_id_indexstart to chara_id_indexend
                 temp_id=int(self.description[chara_id_indexstart[index]:chara_id_indexend[index]])
-
                 #append this integer to the chara_id_list
                 chara_id_list.append(temp_id)
             #sort these numbers from lowest to highest
@@ -398,7 +363,6 @@ class Scene:
             #initialise a options_dict (dictionary) with the key being the option_id with "." removed.
             #The value of teh item will be the result of running the option class with the information extracted form the line above
             self.options_dict[int(option_id.replace('.',''))] = Option(option_id,skillattri,option_descrip,next_scenescore_dict)
-
             #remove the whitespaces of skillattri so it looks like "attribute[num]"
             skillattri=skillattri.replace(' ','')
             #reformat it into the expected output by adding a whitespace to the front (if attribute is pesent)
@@ -413,14 +377,12 @@ class Scene:
         #an if statement to indicate if there are no options in the list the print_out variable should be an empty string
         #otherwise it should be what has been constructed previously
         self.print_out='' if len(self.options_ls)==0 else self.print_out
-
     def __str__(self):
         '''
         a string instance of the class Scene is defined as the following string in the format
         "scene1_id > [1. skill_or_attribute ++id +id -id --id] [...] [n. skill_or_attribute ++id +id -id --id]"
         '''
         return (f'{self.id} >' + self.print_out)
-   
 
 
 class Story:
@@ -438,27 +400,21 @@ class Story:
             - story_text (a list of strings in the format seen in supporting information 1)
             - char_text (a list of strings in the format seen in supporting information 2)
         '''
-
         #checking if the argument story_text is in the correct list format. If it is not raise a ValueError
         if isinstance(story_text, list)==False:
             raise ValueError('wrong input received when creating the story -'+
                                 ' the story text input must be a list')
-
         #checking if the argument char_text is in the correct list format. If it is not raise a ValueError
         if isinstance(char_text, list)==False:
             raise ValueError('wrong input received when creating the story -'+
                                 ' the char_text input must be a list')
-
         #collecting the enumerated indecies for the splitter string "----" that highlight the separation between scenes
         scene_sep_indice = [index for index, element in enumerate(story_text) if element == '----']
-
         #collecting the enumerated indicies for the in scene splitter '====' highlighting the separation between scene information and scene options
         inscene_indice = [index for index, element in enumerate(story_text) if element == '====']
-
         #selecting those scene splitters that represent the start of a scene
         #these include every second scene_sep_indice starting from the first (index 0)
         scene_start_indice=scene_sep_indice[0::2]
-
         #selecting those scene splitters that represent the end of a scene
         #these include every second scene_sep_indice starting from the second (index 1)
         scene_end_indice=scene_sep_indice[1::2]
@@ -474,13 +430,11 @@ class Story:
             #if any of these raise a false, raise a ValueError saying that there has been a problem with the story_text input
             raise ValueError('something wrong with the story list input -'+
                                 ' check divider ---- and ==== locations')
-
         #initializing a chara_dict and scene_dict for this instance to keep track of what is in the story
         self.chara_dict={}
         self.scene_dict={}
         #iterating over the number of items in the scene_end_indice list
         for num_scene in range(len(scene_end_indice)):
-
             #create a temporary index that holds the indecies that are relevant to this scene
             #because all lists are the same length and same format, each scene should have the same index in each of the following lists
             #   - scene_start_indice
@@ -488,41 +442,33 @@ class Story:
             #   - scene_end_indice
             #therefore using the index value num_scene the start, separator and end indicies can be simultaneously extracted and placed in a tuple
             temp_index=(scene_start_indice[num_scene],inscene_indice[num_scene],scene_end_indice[num_scene])
-
             #a temporary scene description is made to hold the description lines for this particular scene
             #the descriptions:
             #   - start 2 elements away from the start separator (temp_index[0]+2)
             #   - end at the inscene separator (temp_index[1])
             # starting with a newline whitespace each line within those explained above are added as a sting
             temp_des='\n'.join(line for line in story_text[temp_index[0]+2:temp_index[1]])
-
             #a temporary id holds the current scene's id found 1 element after the start separator (temp_index[0]+1)
             temp_id=story_text[temp_index[0]+1]
-
             #a temporary options list is creates to hold all of the options in this particular scene
             #the options:
             #   - start 1 elements away from the inscene separator (temp_index[1]+1)
             #   - end at the end scene separator (temp_index[2])
             temp_option_ls=story_text[temp_index[1]+1:temp_index[2]]
-
             #this if statement checks if there is an issue with the scene id
             #if it is absent a ValueError is raised
             if temp_id =='':
                 raise ValueError(f'a scene ID is missing for scene number {num_scene+1}')
-
             #adding to the Story instance's variable scene_dict, the scene information extracted in temporary variables are
             #passed into the Scene class. The key of the dictionary will be the id of the scene and the value will be the instance of the Scene class created
             self.scene_dict[temp_id]=Scene(temp_id,temp_des,temp_index,temp_option_ls)
-
         #create a list of enumerated indicies for the separators '----' in the char_text + 1 so the actual separator is not included
         chara_start_indice = [index+1 for index, element in enumerate(char_text) if element == '----']
         #because we need to capture the fist character and the formatting does not have a '---' separator at the start of the char_text,
         #insert 0 at index 0.
         chara_start_indice.insert(0,0)
-
         #the number of characters in the char_text will be the length of the chara_start_indice
         chara_count=len(chara_start_indice)
-
         #This for loop iterates over the range of chara_count
         for chara_num in range(chara_count):
             #create a current character variable that holds all the information between the start indicie and the start indicie +3
@@ -533,14 +479,12 @@ class Story:
         #initalising the active scene as the start scene with scene_id as "S" and active character to be the first (key = 1)
         self.active_scene=self.scene_dict['S']
         self.active_chara=self.chara_dict[1]
-
     def get_scene_id(self):
         '''
         This method uses self as an argument to retrieve and return the active scene's id in a string format
         eg "S" or "3"
         '''
         return self.active_scene.id
-
     def show_current_scene(self):
         '''
         This method takes the argument self
@@ -553,7 +497,6 @@ class Story:
             ----"
         if a description requires the use of a character's name, that name is used.
         '''
-
         #collecting what will be in the scene description
         description_print=self.active_scene.description
 
